@@ -13,17 +13,19 @@ using System.Runtime.InteropServices;
 
 namespace Auctions.Controllers
 {
-    public class ListingsController : Controller
-    {
+	public class ListingsController : Controller
+	{
 		private readonly IListingsService _listingsService;
 		private readonly IBidsService _bidsService;
+		private readonly ICommentsService _commentsService;
 		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public ListingsController(IListingsService listingsService, IWebHostEnvironment webHostEnvironment, IBidsService bidsService)
+		public ListingsController(IListingsService listingsService, IWebHostEnvironment webHostEnvironment, IBidsService bidsService, ICommentsService commentsService)
 		{
 			_listingsService = listingsService;
 			_webHostEnvironment = webHostEnvironment;
 			_bidsService = bidsService;
+			_commentsService = commentsService;
 		}
 
 		// GET: Listings
@@ -97,7 +99,7 @@ namespace Auctions.Controllers
 		[HttpPost]
 		public async Task<IActionResult> AddBid([Bind("Id, Price, ListingId, IdentityUserId")] Bid bid)
 		{
-			if(ModelState.IsValid)
+			if (ModelState.IsValid)
 			{
 				await _bidsService.Add(bid);
 			}
@@ -112,6 +114,17 @@ namespace Auctions.Controllers
 			var listing = await _listingsService.GetById(id);
 			listing.IsSold = true;
 			await _listingsService.SaveChanges();
+			return View("Details", listing);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AddComment([Bind("Id, Content, ListingId, IdentityUserId")] Comment comment)
+		{
+			if (ModelState.IsValid)
+			{
+				await _commentsService.Add(comment);	
+			}
+			var listing = await _listingsService.GetById(comment.ListingId);
 			return View("Details", listing);
 		}
 
