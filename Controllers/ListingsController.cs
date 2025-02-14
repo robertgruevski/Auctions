@@ -15,11 +15,13 @@ namespace Auctions.Controllers
     public class ListingsController : Controller
     {
 		private readonly IListingsService _listingsService;
+		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public ListingsController(IListingsService listingsService)
-        {
+		public ListingsController(IListingsService listingsService, IWebHostEnvironment webHostEnvironment)
+		{
 			_listingsService = listingsService;
-        }
+			_webHostEnvironment = webHostEnvironment;
+		}
 
 		// GET: Listings
 		public async Task<IActionResult> Index()
@@ -46,12 +48,11 @@ namespace Auctions.Controllers
 		//          return View(listing);
 		//      }
 
-		//      // GET: Listings/Create
-		//      public IActionResult Create()
-		//      {
-		//          ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
-		//          return View();
-		//      }
+		// GET: Listings/Create
+		public IActionResult Create()
+		{
+			return View();
+		}
 
 		// POST: Listings/Create
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
