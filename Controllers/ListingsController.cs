@@ -10,6 +10,7 @@ using Auctions.Models;
 using Auctions.Data.Services;
 using Microsoft.AspNetCore.Hosting;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 
 namespace Auctions.Controllers
 {
@@ -40,6 +41,13 @@ namespace Auctions.Controllers
 			}
 
 			return View(await PaginatedList<Listing>.CreateAsync(applicationDbContext.Where(l => l.IsSold == false).AsNoTracking(), pageNumber ?? 1, pageSize));
+		}
+		public async Task<IActionResult> MyListings(int? pageNumber)
+		{
+			var applicationDbContext = _listingsService.GetAll();
+			int pageSize = 3;
+
+			return View("Index", await PaginatedList<Listing>.CreateAsync(applicationDbContext.Where(l => l.IdentityUserId == User.FindFirstValue(ClaimTypes.NameIdentifier)).AsNoTracking(), pageNumber ?? 1, pageSize));
 		}
 		// GET: Listings/Details/5
 		public async Task<IActionResult> Details(int? id)
